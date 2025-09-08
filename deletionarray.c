@@ -9,6 +9,7 @@ int main() {
     for(i = 0; i < n; i++) {
         scanf("%d", &arr[i]);
     }
+
     printf("Enter position to delete: ");
     scanf("%d", &pos);
     if(pos < 1 || pos > n) {
