@@ -1,46 +1,50 @@
 #include <stdio.h>
+#include <math.h>
 #include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-
-int stack[100], top = -1;
+#define MAX 100
+int stack[MAX];
+int top = -1;
 
 void push(int val) {
+    if(top == MAX - 1) {
+        printf("Stack is full\n");
+        return;
+    }
     stack[++top] = val;
 }
+
 int pop() {
+    if(top == -1) {
+        printf("Stack is empty\n");
+        return -1;
+    }
     return stack[top--];
 }
 
-int main() {
-    char expr[] = "2 4 + 9 4 ^ *";
-    char *token = strtok(expr, " ");
-
-    while (token != NULL) {
-        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
-            push(atoi(token));
+int evalpostfix(char *ch) {
+    for(int i = 0; ch[i] != '\0'; i++) {
+        if(isdigit(ch[i])) {
+            push(ch[i] - '0');
         } else {
-            int b = pop();
-            int a = pop();
-
-            if (strcmp(token, "+") == 0) {
-                push(a + b);
-            } else if (strcmp(token, "-") == 0) {
-                push(a - b);
-            } else if (strcmp(token, "*") == 0) {
-                push(a * b);
-            } else if (strcmp(token, "/") == 0) {
-                push(a / b);
-            } else if (strcmp(token, "^") == 0) {
-                push(a ^ b); 
-            } else {
-                printf("Unknown operator: %s\n", token);
-                return 1;
+            int val2 = pop();
+            int val1 = pop();
+            switch(ch[i]) {
+                case '+': push(val1 + val2); break;
+                case '-': push(val1 - val2); break;
+                case '*': push(val1 * val2); break;
+                case '/': push(val1 / val2); break;
+                case '^': push(pow(val1, val2)); break;
             }
         }
-        token = strtok(NULL, " ");
     }
+    return pop();
+}
 
-    printf("Result: %d\n", pop());
+int main() {
+    char arr[MAX];
+    printf("Enter the postfix expression: ");
+    scanf("%s", arr);
+    int result = evalpostfix(arr);
+    printf("Result: %d\n", result);
     return 0;
 }
